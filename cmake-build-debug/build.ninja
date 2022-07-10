@@ -49,12 +49,19 @@ cmake_ninja_workdir = /home/darvil/git/termgui/cmake-build-debug/
 
 build cmake_object_order_depends_target_termgui: phony || cmake_object_order_depends_target_myhtml
 
-build CMakeFiles/termgui.dir/main.cpp.o: CXX_COMPILER__termgui_Debug /home/darvil/git/termgui/main.cpp || cmake_object_order_depends_target_termgui
-  DEP_FILE = CMakeFiles/termgui.dir/main.cpp.o.d
+build CMakeFiles/termgui.dir/src/main.cpp.o: CXX_COMPILER__termgui_Debug /home/darvil/git/termgui/src/main.cpp || cmake_object_order_depends_target_termgui
+  DEP_FILE = CMakeFiles/termgui.dir/src/main.cpp.o.d
   FLAGS = -g -std=gnu++23
   INCLUDES = -I/home/darvil/git/termgui/third_party/myhtml/source
   OBJECT_DIR = CMakeFiles/termgui.dir
-  OBJECT_FILE_DIR = CMakeFiles/termgui.dir
+  OBJECT_FILE_DIR = CMakeFiles/termgui.dir/src
+
+build CMakeFiles/termgui.dir/src/html_parser.cpp.o: CXX_COMPILER__termgui_Debug /home/darvil/git/termgui/src/html_parser.cpp || cmake_object_order_depends_target_termgui
+  DEP_FILE = CMakeFiles/termgui.dir/src/html_parser.cpp.o.d
+  FLAGS = -g -std=gnu++23
+  INCLUDES = -I/home/darvil/git/termgui/third_party/myhtml/source
+  OBJECT_DIR = CMakeFiles/termgui.dir
+  OBJECT_FILE_DIR = CMakeFiles/termgui.dir/src
 
 
 # =============================================================================
@@ -64,7 +71,7 @@ build CMakeFiles/termgui.dir/main.cpp.o: CXX_COMPILER__termgui_Debug /home/darvi
 #############################################
 # Link the executable termgui
 
-build termgui: CXX_EXECUTABLE_LINKER__termgui_Debug CMakeFiles/termgui.dir/main.cpp.o | third_party/myhtml/libmyhtml.so.4.0.6 || third_party/myhtml/libmyhtml.so third_party/myhtml/libmyhtml.so
+build termgui: CXX_EXECUTABLE_LINKER__termgui_Debug CMakeFiles/termgui.dir/src/main.cpp.o CMakeFiles/termgui.dir/src/html_parser.cpp.o | third_party/myhtml/libmyhtml.so.4.0.6 || third_party/myhtml/libmyhtml.so third_party/myhtml/libmyhtml.so
   FLAGS = -g
   LINK_LIBRARIES = -Wl,-rpath,/home/darvil/git/termgui/cmake-build-debug/third_party/myhtml  third_party/myhtml/libmyhtml.so.4.0.6
   OBJECT_DIR = CMakeFiles/termgui.dir
