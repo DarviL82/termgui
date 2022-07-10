@@ -1,9 +1,0 @@
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/opt/clion/bin/ninja/linux/ninja -G Ninja -S /home/darvil/git/termgui -B /home/darvil/git/termgui/cmake-build-debug
--- Project version: 4.0.6
--- Build with POSIX Threads
--- mycore
--- myencoding
--- myhtml
--- Configuring done
--- Generating done
--- Build files have been written to: /home/darvil/git/termgui/cmake-build-debug
