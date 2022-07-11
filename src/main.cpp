@@ -6,12 +6,12 @@
 
 int main() {
 	HtmlParser parser;
-	auto a = parser.parse("<html><body><h1>Hello World</h1></body></html>");
+	parser.parse("<html><body><h1>Hello World</h1></body></html>");
 
-	auto h1 = a.last_child().child();
-	std::cout << h1.tag_name() << std::endl;
+	auto h1 = parser.get_node_by_tag("h1");
+	std::cout << h1.get_text_content() << std::endl;
 
-	
+
 	// first tree init
 //	myhtml_tree_t* tree = myhtml_tree_create();
 //	myhtml_tree_init(tree, myhtml);
