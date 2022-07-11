@@ -8,16 +8,18 @@
 #include "myhtml/api.h"
 #include <vector>
 
+typedef myhtml_tree_node_t myhtml_node;
+
+
 
 class HtmlParser;
 
-
 class HtmlNode {
 	const HtmlParser* parser;
-	myhtml_tree_node_t* node;
+	myhtml_node* node;
 
 public:
-	HtmlNode(myhtml_tree_node_t* n, const HtmlParser* p) :
+	HtmlNode(myhtml_node* n, const HtmlParser* p) :
 			node{n}, parser{p} { }
 
 	~HtmlNode();
@@ -26,20 +28,26 @@ public:
 	HtmlNode next();
 	HtmlNode prev();
 	HtmlNode parent();
-	HtmlNode child();
+	HtmlNode first_child();
 	HtmlNode last_child();
+	std::vector<HtmlNode> children();
 
 	// node params
-	std::string text();
 	bool has_closing_tag();
 	std::string tag_name();
-	std::string get_text_content();
+	std::string text_content();
+
+protected:
+	std::string text();
 
 private:
-	HtmlNode from(myhtml_tree_node_t* n) const;
+	HtmlNode from(myhtml_node* n) const;
 };
 
 
+/**
+ * Class for interacting with the underlying myhtml lib a bit easier.
+ */
 class HtmlParser {
 	myhtml_t* html = myhtml_create();
 public:

@@ -6,11 +6,14 @@
 
 int main() {
 	HtmlParser parser;
-	parser.parse("<html><body><h1>Hello World</h1></body></html>");
+	parser.parse("<html><body><h1>Hello World</h1><img src=\"ball\"/></body></html>");
 
-	auto h1 = parser.get_node_by_tag("h1");
-	std::cout << h1.get_text_content() << std::endl;
 
+	auto test = parser.get_node_by_tag("body").children();
+
+	for (auto x : test) {
+		std::cout << x.tag_name() << " ";
+	}
 
 	// first tree init
 //	myhtml_tree_t* tree = myhtml_tree_create();

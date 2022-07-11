@@ -56,7 +56,7 @@ HtmlNode HtmlNode::parent() {
 	return from(myhtml_node_parent(node));
 }
 
-HtmlNode HtmlNode::child() {
+HtmlNode HtmlNode::first_child() {
 	return from(myhtml_node_child(node));
 }
 
@@ -68,7 +68,7 @@ std::string HtmlNode::tag_name() {
 	return myhtml_tag_name_by_id(parser->html_tree, myhtml_node_tag_id(node), nullptr);
 }
 
-HtmlNode HtmlNode::from(myhtml_tree_node_t* n) const {
+HtmlNode HtmlNode::from(myhtml_node* n) const {
 	return {n, parser};
 }
 
@@ -77,10 +77,24 @@ std::string HtmlNode::text() {
 }
 
 bool HtmlNode::has_closing_tag() {
-	return myhtml_node_is_close_self(node);
+	return !myhtml_node_is_close_self(node);
 }
 
-std::string HtmlNode::get_text_content() {
-	return child().text();
+std::string HtmlNode::text_content() {
+	return first_child().text();
+}
+
+std::vector<HtmlNode> HtmlNode::children() {
+	auto newNodes = std::vector<HtmlNode>();
+
+	for (
+		myhtml_node* sibling = myhtml_node_child(node);
+		sibling;
+		sibling = myhtml_node_next(sibling)
+	) {
+		newNodes.push_back(from(sibling));
+	}
+
+	return newNodes;
 }
 
