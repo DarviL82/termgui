@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/myhtml)
 
-add_executable(${PROJECT_NAME} src/main.cpp src/html_parser.hpp src/html_parser.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/html/html_parser.hpp src/html/html_parser.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/third_party/myhtml/source)
