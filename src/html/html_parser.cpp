@@ -136,10 +136,10 @@ std::vector<HtmlNode> HtmlNode::children() {
 	std::vector<HtmlNode> newNodes;
 
 	for (
-			myhtml_node* sibling = myhtml_node_child(node);
-			sibling;
-			sibling = myhtml_node_next(sibling)
-			) {
+		myhtml_node* sibling = myhtml_node_child(node);
+		sibling;
+		sibling = myhtml_node_next(sibling)
+	) {
 		newNodes.push_back(from(sibling));
 	}
 
