@@ -16,7 +16,7 @@ myhtml_collection_t* my_get_nodes_by_attribute(
 );
 
 myhtml_collection_t* my_get_nodes_by_attribute(
-	myhtml_tree_t* tree, myhtml_node* node,
+	myhtml_tree_t* tree, myhtml_node* scope,
 	const std::string& key, const std::string& value, bool case_sensitive
 );
 

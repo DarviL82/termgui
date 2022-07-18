@@ -18,10 +18,10 @@ myhtml_collection_t* my_get_nodes_by_attribute(
 }
 
 myhtml_collection_t* my_get_nodes_by_attribute(
-	myhtml_tree_t* tree, myhtml_node* node,
+	myhtml_tree_t* tree, myhtml_node* scope,
 	const std::string& key, const std::string& value, bool case_sensitive
 ) {
-	return my_get_nodes_by_attribute(tree, nullptr, node, key, value, case_sensitive);
+	return my_get_nodes_by_attribute(tree, nullptr, scope, key, value, case_sensitive);
 }
 
 myhtml_collection_t* my_get_nodes_by_attribute(
@@ -71,15 +71,7 @@ HtmlNode HtmlParser::first_node() const {
 }
 
 std::vector<HtmlNode> HtmlParser::get_nodes_by_tag(const std::string& tag) const {
-	myhtml_collection_t* collection = myhtml_get_nodes_by_name(
-			html_tree,
-			nullptr,
-			tag.c_str(),
-			tag.length(),
-			nullptr
-	);
-
-	return myhtml_collection_to_htmlnode_vec(collection);
+	return myhtml_collection_to_htmlnode_vec(my_get_nodes_by_tagname(html_tree, tag));
 }
 
 HtmlNode HtmlParser::get_node_by_tag(const std::string& tag) const {
@@ -102,20 +94,11 @@ HtmlParser::get_nodes_by_attribute(const std::string& key, const std::string& va
 
 std::vector<HtmlNode>
 HtmlParser::get_nodes_by_attribute(
-		const HtmlNode& scope, const std::string& key, const std::string& value,
-		bool case_sensitive
+		const HtmlNode& scope, const std::string& key, const std::string& value, bool case_sensitive
 ) const {
-	return myhtml_collection_to_htmlnode_vec(myhtml_get_nodes_by_attribute_value(
-			html_tree,
-			nullptr,
-			scope.node,
-			!case_sensitive,
-			key.c_str(),
-			key.length(),
-			value.c_str(),
-			value.length(),
-			nullptr
-	));
+	return myhtml_collection_to_htmlnode_vec(
+		my_get_nodes_by_attribute(html_tree, scope.node, key, value, case_sensitive)
+	);
 }
 
 
