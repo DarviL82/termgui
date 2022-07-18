@@ -41,6 +41,9 @@ myhtml_collection_t* my_get_nodes_by_tagname(myhtml_tree_t* tree, const std::str
 }
 
 
+// *********************************************************************************************************************
+// HtmlParser
+// *********************************************************************************************************************
 
 std::vector<HtmlNode> HtmlParser::myhtml_collection_to_htmlnode_vec(myhtml_collection_t* collection) const {
 	std::vector<HtmlNode> newNodes;
@@ -102,6 +105,11 @@ HtmlParser::get_nodes_by_attribute(
 }
 
 
+
+// *********************************************************************************************************************
+// HtmlNode
+// *********************************************************************************************************************
+
 HtmlNode::~HtmlNode() {
 	myhtml_node_free(node);
 }
@@ -158,4 +166,10 @@ std::vector<HtmlNode> HtmlNode::children() {
 	}
 
 	return newNodes;
+}
+
+std::vector<HtmlNode> HtmlNode::get_nodes_by_tagname(const std::string& tag) {
+	return parser->myhtml_collection_to_htmlnode_vec(
+		my_get_nodes_by_tagname(myhtml_node_tree(node), tag)
+	);
 }

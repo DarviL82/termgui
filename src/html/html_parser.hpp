@@ -51,6 +51,7 @@ public:
 	HtmlNode first_child();
 	HtmlNode last_child();
 	std::vector<HtmlNode> children();
+	std::vector<HtmlNode> get_nodes_by_tagname(const std::string& tag);
 
 
 	// node params
@@ -71,6 +72,8 @@ private:
  */
 class HtmlParser {
 	myhtml_t* html = myhtml_create();
+
+	friend HtmlNode;
 public:
 	myhtml_tree_t* html_tree = myhtml_tree_create();
 
