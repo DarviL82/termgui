@@ -1,5 +1,46 @@
 #include "html_parser.hpp"
 
+myhtml_collection_t* my_get_nodes_by_attribute(
+	myhtml_tree_t* tree, myhtml_collection_t* collection, myhtml_node* node,
+	const std::string& key, const std::string& value, bool case_sensitive
+) {
+	return myhtml_get_nodes_by_attribute_value(
+		tree,
+		collection,
+		node,
+		!case_sensitive,
+		key.c_str(),
+		key.length(),
+		value.c_str(),
+		value.length(),
+		nullptr
+	);
+}
+
+myhtml_collection_t* my_get_nodes_by_attribute(
+	myhtml_tree_t* tree, myhtml_node* node,
+	const std::string& key, const std::string& value, bool case_sensitive
+) {
+	return my_get_nodes_by_attribute(tree, nullptr, node, key, value, case_sensitive);
+}
+
+myhtml_collection_t* my_get_nodes_by_attribute(
+	myhtml_tree_t* tree, const std::string& key, const std::string& value, bool case_sensitive
+) {
+	return my_get_nodes_by_attribute(tree, nullptr, nullptr, key, value, case_sensitive);
+}
+
+myhtml_collection_t* my_get_nodes_by_tagname(
+	myhtml_tree_t* tree, myhtml_collection_t* collection, const std::string& tagname
+) {
+	return myhtml_get_nodes_by_name(tree, collection, tagname.c_str(), tagname.length(), nullptr);
+}
+
+myhtml_collection_t* my_get_nodes_by_tagname(myhtml_tree_t* tree, const std::string& tagname) {
+	return my_get_nodes_by_tagname(tree, nullptr, tagname);
+}
+
+
 
 std::vector<HtmlNode> HtmlParser::myhtml_collection_to_htmlnode_vec(myhtml_collection_t* collection) const {
 	std::vector<HtmlNode> newNodes;
@@ -56,17 +97,7 @@ HtmlNode HtmlParser::get_node_by_classname(const std::string& selector, bool cas
 
 std::vector<HtmlNode>
 HtmlParser::get_nodes_by_attribute(const std::string& key, const std::string& value, bool case_sensitive) const {
-	return myhtml_collection_to_htmlnode_vec(myhtml_get_nodes_by_attribute_value(
-			html_tree,
-			nullptr,
-			nullptr,
-			!case_sensitive,
-			key.c_str(),
-			key.length(),
-			value.c_str(),
-			value.length(),
-			nullptr
-	));
+	return myhtml_collection_to_htmlnode_vec(my_get_nodes_by_attribute(html_tree, key, value, case_sensitive));
 }
 
 std::vector<HtmlNode>
@@ -145,4 +176,3 @@ std::vector<HtmlNode> HtmlNode::children() {
 
 	return newNodes;
 }
-

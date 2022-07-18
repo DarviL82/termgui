@@ -6,8 +6,31 @@
 
 typedef myhtml_tree_node_t myhtml_node;
 
-
 class HtmlParser;
+class HtmlNode;
+
+
+myhtml_collection_t* my_get_nodes_by_attribute(
+	myhtml_tree_t* tree, myhtml_collection_t* collection, myhtml_node* node,
+	const std::string& key, const std::string& value, bool case_sensitive
+);
+
+myhtml_collection_t* my_get_nodes_by_attribute(
+	myhtml_tree_t* tree, myhtml_node* node,
+	const std::string& key, const std::string& value, bool case_sensitive
+);
+
+myhtml_collection_t* my_get_nodes_by_attribute(
+	myhtml_tree_t* tree, const std::string& key, const std::string& value, bool case_sensitive
+);
+
+myhtml_collection_t* my_get_nodes_by_tagname(
+	myhtml_tree_t* tree, myhtml_collection_t* collection, const std::string& tagname
+);
+
+myhtml_collection_t* my_get_nodes_by_tagname(myhtml_tree_t* tree, const std::string& tagname);
+
+
 
 class HtmlNode {
 	const HtmlParser* parser;
@@ -28,6 +51,7 @@ public:
 	HtmlNode first_child();
 	HtmlNode last_child();
 	std::vector<HtmlNode> children();
+
 
 	// node params
 	bool has_closing_tag();
