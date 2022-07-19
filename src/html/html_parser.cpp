@@ -41,6 +41,34 @@ myhtml_collection_t* my_get_nodes_by_tagname(myhtml_tree_t* tree, const std::str
 }
 
 
+
+
+// *********************************************************************************************************************
+// HtmlNoChildrenException
+// *********************************************************************************************************************
+
+const char* HtmlNoChildrenException::what() const noexcept {
+	return "HtmlNode has no children";
+}
+
+void HtmlNoChildrenException::throw_if_no_children(const HtmlNode& node) {
+	if (!node.has_children()) throw HtmlNoChildrenException();
+}
+
+
+
+
+// *********************************************************************************************************************
+// HtmlNoSiblingException
+// *********************************************************************************************************************
+
+const char* HtmlNoSiblingException::what() const noexcept {
+	return is_left ? "HtmlNode has no left sibling" : "HtmlNode has no right sibling";
+}
+
+
+
+
 // *********************************************************************************************************************
 // HtmlParser
 // *********************************************************************************************************************
@@ -65,29 +93,13 @@ HtmlParser::~HtmlParser() {
 	myhtml_destroy(html);
 }
 
-void HtmlParser::parse(const std::string& _html) const {
+HtmlNode HtmlParser::parse(const std::string& _html) const {
 	myhtml_parse(html_tree, MyENCODING_UTF_8, _html.c_str(), _html.length());
+	return first_node();
 }
 
 HtmlNode HtmlParser::first_node() const {
 	return {myhtml_node_first(html_tree), this};
-}
-
-std::vector<HtmlNode> HtmlParser::get_nodes_by_tag(const std::string& tag) const {
-	return myhtml_collection_to_htmlnode_vec(my_get_nodes_by_tagname(html_tree, tag));
-}
-
-HtmlNode HtmlParser::get_node_by_tag(const std::string& tag) const {
-	return get_nodes_by_tag(tag)[0];
-}
-
-std::vector<HtmlNode>
-HtmlParser::get_nodes_by_classname(const std::string& classname, bool case_sensitive) const {
-	return get_nodes_by_attribute("class", classname, case_sensitive);
-}
-
-HtmlNode HtmlParser::get_node_by_classname(const std::string& selector, bool case_sensitive) const {
-	return get_nodes_by_classname(selector, case_sensitive)[0];
 }
 
 std::vector<HtmlNode>
@@ -114,27 +126,41 @@ HtmlNode::~HtmlNode() {
 	myhtml_node_free(node);
 }
 
-HtmlNode HtmlNode::next() {
-	return from(myhtml_node_next(node));
+HtmlNode HtmlNode::next() const {
+	myhtml_node* sibling = myhtml_node_next(node);
+
+	if (sibling == nullptr)
+		throw HtmlNoSiblingException(false);
+
+	return from(sibling);
 }
 
-HtmlNode HtmlNode::prev() {
-	return from(myhtml_node_prev(node));
+HtmlNode HtmlNode::prev() const {
+	myhtml_node* sibling = myhtml_node_prev(node);
+
+	if (sibling == nullptr)
+		throw HtmlNoSiblingException(true);
+
+	return from(sibling);
 }
 
-HtmlNode HtmlNode::parent() {
+HtmlNode HtmlNode::parent() const {
 	return from(myhtml_node_parent(node));
 }
 
-HtmlNode HtmlNode::first_child() {
+HtmlNode HtmlNode::first_child() const {
+	HtmlNoChildrenException::throw_if_no_children(*this);
+
 	return from(myhtml_node_child(node));
 }
 
-HtmlNode HtmlNode::last_child() {
+HtmlNode HtmlNode::last_child() const {
+	HtmlNoChildrenException::throw_if_no_children(*this);
+
 	return from(myhtml_node_last_child(node));
 }
 
-std::string HtmlNode::tag_name() {
+std::string HtmlNode::tag_name() const {
 	return myhtml_tag_name_by_id(parser->html_tree, myhtml_node_tag_id(node), nullptr);
 }
 
@@ -142,19 +168,21 @@ HtmlNode HtmlNode::from(myhtml_node* n) const {
 	return {n, parser};
 }
 
-std::string HtmlNode::text() {
+std::string HtmlNode::text() const {
 	return myhtml_node_text(node, nullptr);
 }
 
-bool HtmlNode::has_closing_tag() {
+bool HtmlNode::has_closing_tag() const {
 	return !myhtml_node_is_close_self(node);
 }
 
-std::string HtmlNode::text_content() {
+std::string HtmlNode::text_content() const {
 	return first_child().text();
 }
 
-std::vector<HtmlNode> HtmlNode::children() {
+std::vector<HtmlNode> HtmlNode::children() const {
+	HtmlNoChildrenException::throw_if_no_children(*this);
+
 	std::vector<HtmlNode> newNodes;
 
 	for (
@@ -168,8 +196,36 @@ std::vector<HtmlNode> HtmlNode::children() {
 	return newNodes;
 }
 
-std::vector<HtmlNode> HtmlNode::get_nodes_by_tagname(const std::string& tag) {
+std::vector<HtmlNode> HtmlNode::get_nodes_by_tagname(const std::string& tag) const {
 	return parser->myhtml_collection_to_htmlnode_vec(
 		my_get_nodes_by_tagname(myhtml_node_tree(node), tag)
 	);
+}
+
+std::vector<HtmlNode> HtmlNode::get_nodes_by_classname(const std::string& classname) const {
+	return parser->myhtml_collection_to_htmlnode_vec(
+		my_get_nodes_by_attribute(myhtml_node_tree(node), "class", classname)
+	);
+}
+
+std::vector<HtmlNode> HtmlNode::get_nodes_by_id(const std::string& id) const {
+	return parser->myhtml_collection_to_htmlnode_vec(
+		my_get_nodes_by_attribute(myhtml_node_tree(node), "id", id)
+	);
+}
+
+HtmlNode HtmlNode::get_node_by_tagname(const std::string& tag) const {
+	return get_nodes_by_tagname(tag)[0];
+}
+
+HtmlNode HtmlNode::get_node_by_classname(const std::string& classname) const {
+	return get_nodes_by_classname(classname)[0];
+}
+
+HtmlNode HtmlNode::get_node_by_id(const std::string& id) const {
+	return get_nodes_by_id(id)[0];
+}
+
+bool HtmlNode::has_children() const {
+	return myhtml_node_child(node) != nullptr;
 }

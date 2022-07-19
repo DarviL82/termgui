@@ -7,10 +7,10 @@
 
 int main() {
 	HtmlParser parser;
-	parser.parse("<h1>test1</h1><h1 class='poggers'><span>hello!</span></h1>");
-	auto node = parser.get_node_by_classname("poggers");
+	auto tree = parser.parse("<h1>test1</h1><h1 class='poggers'><span class='baller'><img class='shit'>hello!</span></h1>");
+	HtmlNode nodes = tree.get_node_by_classname("da");
 
-	std::cout << node.get_nodes_by_tagname("span")[0].text_content() << std::endl;
+	std::cout << nodes.tag_name() << std::endl;
 
 
 }
