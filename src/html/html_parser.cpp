@@ -4,7 +4,8 @@ myhtml_collection_t* my_get_nodes_by_attribute(
 	myhtml_tree_t* tree, myhtml_collection_t* collection, myhtml_node* node,
 	const std::string& key, const std::string& value, bool case_sensitive
 ) {
-	return myhtml_get_nodes_by_attribute_value(
+
+	myhtml_collection_t* nodes = myhtml_get_nodes_by_attribute_value(
 		tree,
 		collection,
 		node,
@@ -15,6 +16,12 @@ myhtml_collection_t* my_get_nodes_by_attribute(
 		value.length(),
 		nullptr
 	);
+
+	if (nodes->length == 0) {
+		throw HtmlNoElementsFoundException();
+	}
+
+	return nodes;
 }
 
 myhtml_collection_t* my_get_nodes_by_attribute(
@@ -44,7 +51,7 @@ myhtml_collection_t* my_get_nodes_by_tagname(myhtml_tree_t* tree, const std::str
 
 
 // *********************************************************************************************************************
-// HtmlNoChildrenException
+// Exceptions
 // *********************************************************************************************************************
 
 const char* HtmlNoChildrenException::what() const noexcept {
@@ -56,14 +63,13 @@ void HtmlNoChildrenException::throw_if_no_children(const HtmlNode& node) {
 }
 
 
-
-
-// *********************************************************************************************************************
-// HtmlNoSiblingException
-// *********************************************************************************************************************
-
 const char* HtmlNoSiblingException::what() const noexcept {
 	return is_left ? "HtmlNode has no left sibling" : "HtmlNode has no right sibling";
+}
+
+
+const char* HtmlNoElementsFoundException::what() const noexcept {
+	return "No elements found";
 }
 
 
@@ -102,20 +108,6 @@ HtmlNode HtmlParser::first_node() const {
 	return {myhtml_node_first(html_tree), this};
 }
 
-std::vector<HtmlNode>
-HtmlParser::get_nodes_by_attribute(const std::string& key, const std::string& value, bool case_sensitive) const {
-	return myhtml_collection_to_htmlnode_vec(my_get_nodes_by_attribute(html_tree, key, value, case_sensitive));
-}
-
-std::vector<HtmlNode>
-HtmlParser::get_nodes_by_attribute(
-		const HtmlNode& scope, const std::string& key, const std::string& value, bool case_sensitive
-) const {
-	return myhtml_collection_to_htmlnode_vec(
-		my_get_nodes_by_attribute(html_tree, scope.node, key, value, case_sensitive)
-	);
-}
-
 
 
 // *********************************************************************************************************************
@@ -129,19 +121,13 @@ HtmlNode::~HtmlNode() {
 HtmlNode HtmlNode::next() const {
 	myhtml_node* sibling = myhtml_node_next(node);
 
-	if (sibling == nullptr)
-		throw HtmlNoSiblingException(false);
-
-	return from(sibling);
+	return from((sibling != nullptr) ? sibling : throw HtmlNoSiblingException(false));
 }
 
 HtmlNode HtmlNode::prev() const {
 	myhtml_node* sibling = myhtml_node_prev(node);
 
-	if (sibling == nullptr)
-		throw HtmlNoSiblingException(true);
-
-	return from(sibling);
+	return from((sibling != nullptr) ? sibling : throw HtmlNoSiblingException(true));
 }
 
 HtmlNode HtmlNode::parent() const {
@@ -229,3 +215,4 @@ HtmlNode HtmlNode::get_node_by_id(const std::string& id) const {
 bool HtmlNode::has_children() const {
 	return myhtml_node_child(node) != nullptr;
 }
+

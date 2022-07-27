@@ -43,7 +43,11 @@ public:
 	explicit HtmlNoSiblingException(bool is_left): is_left(is_left) {}
 
 	[[nodiscard]] const char* what() const noexcept override;
-	static void throw_if_no_sibling(const HtmlNode& node, bool left);
+};
+
+class HtmlNoElementsFoundException : public std::exception {
+public:
+	[[nodiscard]] const char* what() const noexcept override;
 };
 
 
@@ -107,10 +111,4 @@ public:
 
 private:
 	std::vector<HtmlNode> myhtml_collection_to_htmlnode_vec(myhtml_collection_t* collection) const;
-	[[nodiscard]] std::vector<HtmlNode> get_nodes_by_attribute(
-		const std::string& key, const std::string& value, bool case_sensitive = false
-	) const;
-	[[nodiscard]] std::vector<HtmlNode> get_nodes_by_attribute(
-		const HtmlNode& scope, const std::string& key, const std::string& value, bool case_sensitive = false
-	) const;
 };
