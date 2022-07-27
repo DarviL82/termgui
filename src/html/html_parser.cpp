@@ -17,7 +17,7 @@ myhtml_collection_t* my_get_nodes_by_attribute(
 		nullptr
 	);
 
-	if (nodes->length == 0) {
+	if (nodes == nullptr || nodes->length == 0) {
 		throw HtmlNoElementsFoundException();
 	}
 
@@ -40,7 +40,13 @@ myhtml_collection_t* my_get_nodes_by_attribute(
 myhtml_collection_t* my_get_nodes_by_tagname(
 	myhtml_tree_t* tree, myhtml_collection_t* collection, const std::string& tagname
 ) {
-	return myhtml_get_nodes_by_name(tree, collection, tagname.c_str(), tagname.length(), nullptr);
+	auto new_collection = myhtml_get_nodes_by_name(tree, collection, tagname.c_str(), tagname.length(), nullptr);
+
+	if (new_collection == nullptr || new_collection->length == 0) {
+		throw HtmlNoElementsFoundException();
+	}
+
+	return new_collection;
 }
 
 myhtml_collection_t* my_get_nodes_by_tagname(myhtml_tree_t* tree, const std::string& tagname) {
