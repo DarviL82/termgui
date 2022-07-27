@@ -3,6 +3,8 @@
 #include <string>
 #include "myhtml/api.h"
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 typedef myhtml_tree_node_t myhtml_node;
 
@@ -107,6 +109,7 @@ public:
 	~HtmlParser();
 
 	[[nodiscard]] HtmlNode parse(const std::string& _html) const;
+	[[nodiscard]] HtmlNode parse_file(const std::string& filename) const;
 	[[nodiscard]] HtmlNode first_node() const;
 
 private:

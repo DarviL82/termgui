@@ -2,15 +2,16 @@
 #include <iostream>
 
 #include "html/html_parser.hpp"
-
+//
 
 
 int main() {
 	HtmlParser parser;
-	auto tree = parser.parse("<h1>test1</h1><h1 class='poggers'><span class='baller'><img class='shit'>hello!</span></h1>");
-	HtmlNode nodes = tree.get_node_by_classname("shit");
+	auto tree = parser.parse_file("test.html");
 
-	std::cout << nodes.tag_name() << std::endl;
+	HtmlNode nodes = tree.get_node_by_tagname("panel");
 
-
+	for (auto& node : nodes.children()) {
+		std::cout << node.tag_name() << std::endl;
+	}
 }

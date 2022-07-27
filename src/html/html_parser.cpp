@@ -110,9 +110,17 @@ HtmlNode HtmlParser::parse(const std::string& _html) const {
 	return first_node();
 }
 
+HtmlNode HtmlParser::parse_file(const std::string& filename) const {
+	std::ifstream in(filename);
+	std::stringstream str;
+	str << in.rdbuf();
+	return parse(str.str());
+}
+
 HtmlNode HtmlParser::first_node() const {
 	return {myhtml_node_first(html_tree), this};
 }
+
 
 
 
